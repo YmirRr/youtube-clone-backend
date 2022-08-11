@@ -23,6 +23,17 @@ module.exports = appInfo => {
     // myAppName: 'egg',
   }
 
+  config.mongoose = {
+    client: {
+      url: 'mongodb://127.0.0.1/youtube-clone',
+      options: {
+        useUnifiedTopology: true
+      },
+      // mongoose global plugins, expected a function or an array of function and options
+      plugins: [],
+    },
+  }
+
   return {
     ...config,
     ...userConfig,
