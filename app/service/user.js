@@ -2,23 +2,23 @@ const Service = require('egg').Service
 const jwt = require('jsonwebtoken')
 
 class UserService extends Service {
-  get User () {
+  get User() {
     return this.app.model.User
   }
 
-  findByUsername (username) {
+  findByUsername(username) {
     return this.User.findOne({
-      username
+      username,
     })
   }
 
-  findByEmail (email) {
+  findByEmail(email) {
     return this.User.findOne({
-      email
+      email,
     }).select('+password')
   }
 
-  async createUser (data) {
+  async createUser(data) {
     data.password = this.ctx.helper.md5(data.password)
     const user = new this.User(data)
     await user.save() // 保存到数据库
@@ -27,7 +27,7 @@ class UserService extends Service {
 
   createToken(data) {
     return jwt.sign(data, this.app.config.jwt.secret, {
-      expiresIn: this.app.config.jwt.expiresIn
+      expiresIn: this.app.config.jwt.expiresIn,
     })
   }
 
