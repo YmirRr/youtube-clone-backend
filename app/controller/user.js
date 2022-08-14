@@ -1,6 +1,9 @@
 const Controller = require('egg').Controller
 
 class UserController extends Controller {
+  get pick() {
+    return this.ctx.helper._.pick
+  }
   async create() {
     // 1.数据校验
     const body = this.ctx.request.body
@@ -30,7 +33,7 @@ class UserController extends Controller {
     // 4.发送响应
     this.ctx.body = {
       user: {
-        ...this.ctx.helper._.pick(user, ['username', 'email', 'avatar', 'channelDescription']),
+        ...this.pick(user, ['username', 'email', 'avatar', 'channelDescription']),
         token,
       },
     }
@@ -62,7 +65,7 @@ class UserController extends Controller {
     })
     // 5.发送响应数据
     this.ctx.body = {
-      ...this.ctx.helper._.pick(user, ['username', 'email', 'avatar', 'channelDescription']),
+      ...this.pick(user, ['username', 'email', 'avatar', 'channelDescription']),
       token,
     }
   }
@@ -72,7 +75,7 @@ class UserController extends Controller {
     // 3.发送响应
     const user = this.ctx.user
     this.ctx.body = {
-      ...this.ctx.helper._.pick(user, ['username', 'email', 'avatar', 'channelDescription']),
+      ...this.pick(user, ['username', 'email', 'avatar', 'channelDescription']),
       token: this.ctx.token,
     }
   }
@@ -106,7 +109,7 @@ class UserController extends Controller {
     const user = await userService.updateUser(body)
     // 5.返回更新之后的用户信息
     this.ctx.body = {
-      user: this.ctx.helper._.pick(user, ['username', 'email', 'avatar', 'channelDescription']),
+      user: this.pick(user, ['username', 'email', 'avatar', 'channelDescription']),
     }
   }
   async subscribe() {
@@ -121,7 +124,7 @@ class UserController extends Controller {
     // 3.发送响应
     this.ctx.body = {
       user: {
-        ...this.ctx.helper._.pick(user, ['username', 'email', 'avatar', 'cover', 'channelDescription', 'subscribersCount']),
+        ...this.pick(user, ['username', 'email', 'avatar', 'cover', 'channelDescription', 'subscribersCount']),
         isSubscribed: true,
       },
     }
@@ -138,7 +141,7 @@ class UserController extends Controller {
     // 3.发送响应
     this.ctx.body = {
       user: {
-        ...this.ctx.helper._.pick(user, ['username', 'email', 'avatar', 'cover', 'channelDescription', 'subscribersCount']),
+        ...this.pick(user, ['username', 'email', 'avatar', 'cover', 'channelDescription', 'subscribersCount']),
         isSubscribed: false,
       },
     }
@@ -161,9 +164,18 @@ class UserController extends Controller {
     // 3.发送响应
     this.ctx.body = {
       user: {
-        ...this.ctx.helper._.pick(user, ['username', 'email', 'avatar', 'cover', 'channelDescription', 'subscribersCount']),
+        ...this.pick(user, ['username', 'email', 'avatar', 'cover', 'channelDescription', 'subscribersCount']),
         isSubscribed,
       },
+    }
+  }
+  async getSubscriptions() {
+    const Subscription = this.app.model.Subscription
+    let subscriptions = await Subscription.find({
+      user: this.ctx.params.userId,
+    }).populate('channel')
+    this.ctx.body = {
+      subscriptions: subscriptions.map(({ channel }) => this.pick(channel, ['_id', 'username', 'avatar'])),
     }
   }
 }
