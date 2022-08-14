@@ -143,6 +143,29 @@ class UserController extends Controller {
       },
     }
   }
+  async getUser() {
+    // 1.获取订阅状态
+    let isSubscribed = false
+    if (this.ctx.user) {
+      // 获取订阅记录
+      const record = await this.app.model.Subscription.findOne({
+        user: this.ctx.user._id,
+        channel: this.ctx.params.userId,
+      })
+      if (record) {
+        isSubscribed = true
+      }
+    }
+    // 2.获取用户信息
+    const user = await this.app.model.User.findById(this.ctx.params.userId)
+    // 3.发送响应
+    this.ctx.body = {
+      user: {
+        ...this.ctx.helper._.pick(user, ['username', 'email', 'avatar', 'cover', 'channelDescription', 'subscribersCount']),
+        isSubscribed,
+      },
+    }
+  }
 }
 
 module.exports = UserController
