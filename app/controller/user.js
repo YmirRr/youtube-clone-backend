@@ -30,11 +30,8 @@ class UserController extends Controller {
     // 4.发送响应
     this.ctx.body = {
       user: {
-        email: user.email,
+        ...this.ctx.helper._.pick(user, ['username', 'email', 'avatar', 'channelDescription']),
         token,
-        username: user.username,
-        channelDescription: user.channelDescription,
-        avatar: user.avatar,
       },
     }
   }
@@ -65,11 +62,8 @@ class UserController extends Controller {
     })
     // 5.发送响应数据
     this.ctx.body = {
-      email: user.email,
+      ...this.ctx.helper._.pick(user, ['username', 'email', 'avatar', 'channelDescription']),
       token,
-      username: user.username,
-      channelDescription: user.channelDescription,
-      avatar: user.avatar,
     }
   }
   async getCurrentUser() {
@@ -78,11 +72,8 @@ class UserController extends Controller {
     // 3.发送响应
     const user = this.ctx.user
     this.ctx.body = {
-      email: user.email,
+      ...this.ctx.helper._.pick(user, ['username', 'email', 'avatar', 'channelDescription']),
       token: this.ctx.token,
-      username: user.username,
-      channelDescription: user.channelDescription,
-      avatar: user.avatar,
     }
   }
   async update() {
@@ -115,12 +106,7 @@ class UserController extends Controller {
     const user = await userService.updateUser(body)
     // 5.返回更新之后的用户信息
     this.ctx.body = {
-      user: {
-        username: user.username,
-        email: user.email,
-        channelDescription: user.channelDescription,
-        avatar: user.avatar,
-      },
+      user: this.ctx.helper._.pick(user, ['username', 'email', 'avatar', 'channelDescription']),
     }
   }
   async subscribe() {
@@ -135,7 +121,7 @@ class UserController extends Controller {
     // 3.发送响应
     this.ctx.body = {
       user: {
-        ...user.toJSON(),
+        ...this.ctx.helper._.pick(user, ['username', 'email', 'avatar', 'cover', 'channelDescription', 'subscribersCount']),
         isSubscribed: true,
       },
     }
