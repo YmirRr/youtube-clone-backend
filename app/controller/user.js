@@ -126,6 +126,23 @@ class UserController extends Controller {
       },
     }
   }
+  async unsubscribe() {
+    const userId = this.ctx.user._id
+    const channelId = this.ctx.params.userId
+    // 1.用户不能订阅自己
+    if (userId.equals(channelId)) {
+      this.ctx.throw(422, '用户不能订阅自己')
+    }
+    // 2.取消订阅
+    const user = await this.service.user.unsubscribe(userId, channelId)
+    // 3.发送响应
+    this.ctx.body = {
+      user: {
+        ...this.ctx.helper._.pick(user, ['username', 'email', 'avatar', 'cover', 'channelDescription', 'subscribersCount']),
+        isSubscribed: false,
+      },
+    }
+  }
 }
 
 module.exports = UserController

@@ -10,4 +10,5 @@ module.exports = app => {
 
   // 用户订阅
   router.post('/users/:userId/subscribe', auth, controller.user.subscribe)
+  router.delete('/users/:userId/subscribe', auth, controller.user.unsubscribe)
 }
